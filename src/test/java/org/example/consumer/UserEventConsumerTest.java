@@ -1,6 +1,7 @@
 package org.example.consumer;
 
 import org.example.dto.UserNotificationEvent;
+import org.example.enums.Operation;
 import org.example.service.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ class UserEventConsumerTest {
     void whenCreateEvent_thenSendCreatedNotification() throws Exception {
         UserNotificationEvent event = new UserNotificationEvent();
         event.setEmail("test@yandex.ru");
-        event.setOperation(UserNotificationEvent.Operation.CREATE);
+        event.setOperation(Operation.CREATE);
 
         kafkaTemplate.send("user-notifications", event).get(5, TimeUnit.SECONDS);
 
@@ -55,7 +56,7 @@ class UserEventConsumerTest {
     void whenDeleteEvent_thenSendDeletedNotification() throws Exception {
         UserNotificationEvent event = new UserNotificationEvent();
         event.setEmail("test@yandex.ru");
-        event.setOperation(UserNotificationEvent.Operation.DELETE);
+        event.setOperation(Operation.DELETE);
 
         kafkaTemplate.send("user-notifications", event).get(5, TimeUnit.SECONDS);
 

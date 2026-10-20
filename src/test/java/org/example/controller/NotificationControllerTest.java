@@ -1,6 +1,9 @@
 package org.example.controller;
 
+import org.example.dto.NotificationEventResponse;
 import org.example.dto.UserNotificationEvent;
+import org.example.enums.Operation;
+import org.example.enums.Status;
 import org.example.service.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +13,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper; // Jackson 3
 
+import java.time.LocalDateTime;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,19 +39,34 @@ class NotificationControllerTest {
     private NotificationService notificationService;
 
     @Test
-    void whenPostAccountEvent_thenCallServiceAndReturn200() throws Exception {
+    void whenPostAccountEvent_thenReturnResponseAndCallService() throws Exception {
         UserNotificationEvent event = new UserNotificationEvent();
         event.setEmail("test@yandex.ru");
-        event.setOperation(UserNotificationEvent.Operation.CREATE);
+        event.setOperation(Operation.CREATE);
+
+        NotificationEventResponse response = NotificationEventResponse.builder()
+                .id(1L)
+                .email("test@yandex.ru")
+                .operation(Operation.CREATE)
+                .status(Status.SENT)
+                .createdAt(LocalDateTime.now())
+                .processedAt(LocalDateTime.now())
+                .build();
+
+        when(notificationService.sendAccountEvent(any(UserNotificationEvent.class)))
+                .thenReturn(response);
 
         mockMvc.perform(post("/api/notifications/account-event")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(event)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("test@yandex.ru"))
+                .andExpect(jsonPath("$.status").value("SENT"))
+                .andExpect(jsonPath("$.operation").value("CREATE"));
 
         verify(notificationService).sendAccountEvent(any(UserNotificationEvent.class));
     }
-
 
     @Test
     void whenInvalidJson_thenReturn400() throws Exception {
@@ -90,7 +111,7 @@ class NotificationControllerTest {
 
         UserNotificationEvent event = new UserNotificationEvent();
         event.setEmail("test@yandex.ru");
-        event.setOperation(UserNotificationEvent.Operation.CREATE);
+        event.setOperation(Operation.CREATE);
 
         mockMvc.perform(post("/api/notifications/account-event")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +128,7 @@ class NotificationControllerTest {
 
         UserNotificationEvent event = new UserNotificationEvent();
         event.setEmail("test@yandex.ru");
-        event.setOperation(UserNotificationEvent.Operation.CREATE);
+        event.setOperation(Operation.CREATE);
 
         mockMvc.perform(post("/api/notifications/account-event")
                         .contentType(MediaType.APPLICATION_JSON)
