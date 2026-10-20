@@ -3,6 +3,7 @@ package org.example.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.NotificationEventResponse;
 import org.example.dto.UserNotificationEvent;
 import org.example.service.EmailService;
 import org.example.service.NotificationService;
@@ -19,8 +20,8 @@ public class NotificationController {
 
     @PostMapping("/account-event")
     @ResponseStatus(HttpStatus.OK)
-    public void notifyAccountEvent(@Valid @RequestBody UserNotificationEvent notificationEvent) {
+    public NotificationEventResponse notifyAccountEvent(@Valid @RequestBody UserNotificationEvent notificationEvent) {
         log.info("Received event: {} for {}", notificationEvent.getOperation(), notificationEvent.getEmail());
-         notificationService.sendAccountEvent(notificationEvent);
+        return notificationService.sendAccountEvent(notificationEvent);
     }
 }

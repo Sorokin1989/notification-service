@@ -46,7 +46,7 @@ class NotificationControllerTest {
         verify(notificationService).sendAccountEvent(any(UserNotificationEvent.class));
     }
 
-    // === Ошибки ===
+
     @Test
     void whenInvalidJson_thenReturn400() throws Exception {
         mockMvc.perform(post("/api/notifications/account-event")

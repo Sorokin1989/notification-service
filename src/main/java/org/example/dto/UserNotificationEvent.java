@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.enums.Operation;
 
 @Data
 @NoArgsConstructor
@@ -19,5 +20,5 @@ public class UserNotificationEvent {
     @NotNull(message = "Operation не может быть пустым")
     private Operation operation;
 
-    public enum Operation { CREATE, DELETE }
+
 }
