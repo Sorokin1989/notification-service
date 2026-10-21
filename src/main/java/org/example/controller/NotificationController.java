@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dto.NotificationEventResponse;
 import org.example.dto.UserNotificationEvent;
-import org.example.service.EmailService;
 import org.example.service.NotificationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
